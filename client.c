@@ -10,33 +10,28 @@ int main(int argc, char const *argv[]) {
     key_t mykey = ftok("mymsgkey", 1);
     int msqid = msgget(mykey, IPC_CREAT);
     int x = 0;
-    int y[5] = {1, 0, 1, 0, 1};
     char op = 0;
     MsgCalc msgCalc;
     MsgRslt msgRslt;
-    printf("Number : ");
+
     while (1) {
+        printf("Number : ");
         scanf("%d", &x);
-        fflush(stdout);
+        fflush(stdout); //버퍼를 비워줌
         fflush(stdin);
-        memset(&msgCalc, 0x00, sizeof(MsgCalc));
+        memset(&msgCalc, 0x00, sizeof(MsgCalc)); //초기화
         msgCalc.mtype = MSG_TYPE_CALC;
-        msgCalc.calc.x = x;
-        if (0 < x && x < 6) {
-            if (x % 2 == 1) {
-                printf(">> Answer : CORRECT!\n");
-            } else {
-                printf(">> Answer : WRONG!\n");
-            }
-
-        } else if (0 >= x || x >= 6) {
-            printf(">> Answer : WRONG!\n");
-        }
-
+        msgCalc.calc.x = x; //메인문에서 받은걸 구조체에 넣어주고
         msgsnd(msqid, &msgCalc, MSG_SIZE_CALC, 0);
-        memset(&msgRslt, 0x00, sizeof(MsgRslt));
-        msgrcv(msqid, &msgRslt, MSG_SIZE_RSLT, MSG_TYPE_RSLT, 0);
+        msgrcv(msqid, &msgRslt, MSG_SIZE_RSLT, MSG_TYPE_RSLT,
+               0); //서버에서 데이터를 받을 때 까지 기다림
+        if (msgRslt.rslt == 1) {
+            printf(">> Answer : CORRECT! \n");
+        } else {
+            printf(">> Answer : WRONG! \n");
+        }
         // printf(">>> %d\n", msgRslt.rslt);
     }
+
     return 0;
 }
