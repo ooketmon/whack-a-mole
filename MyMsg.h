@@ -7,7 +7,6 @@
 struct __Calc {
     int x;
     int y;
-    char op;
 };
 typedef struct __Calc Calc;
 struct __MsgCalc {

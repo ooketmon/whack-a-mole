@@ -17,14 +17,14 @@ int main(int argc, char const *argv[]) {
     while (1) {
         printf("Number : ");
         scanf("%d", &x);
-        fflush(stdout); //버퍼를 비워줌
+        fflush(stdout);
         fflush(stdin);
-        memset(&msgCalc, 0x00, sizeof(MsgCalc)); //초기화
+        memset(&msgCalc, 0x00, sizeof(MsgCalc));
         msgCalc.mtype = MSG_TYPE_CALC;
-        msgCalc.calc.x = x; //메인문에서 받은걸 구조체에 넣어주고
+        msgCalc.calc.x = x;
         msgsnd(msqid, &msgCalc, MSG_SIZE_CALC, 0);
-        msgrcv(msqid, &msgRslt, MSG_SIZE_RSLT, MSG_TYPE_RSLT,
-               0); //서버에서 데이터를 받을 때 까지 기다림
+        memset(&msgRslt, 0x00, sizeof(MsgRslt));
+        msgrcv(msqid, &msgRslt, MSG_SIZE_RSLT, MSG_TYPE_RSLT, 0);
         if (msgRslt.rslt == 1) {
             printf(">> Answer : CORRECT! \n");
         } else {
